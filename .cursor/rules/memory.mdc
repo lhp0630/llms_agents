@@ -1,0 +1,198 @@
+---
+description: 始终包含以获取项目上下文
+globs: 
+alwaysApply: false
+---
+# Memory 文件结构
+
+本文概述文档维护、基于文件系统建立 Memory 所遵循的基本原则、必需文件、工作流结构及关键流程。
+Memory 文件由必需的核心文件与可选的上下文文件组成, 文件之间按清晰层级相互依赖:
+```mermaid
+flowchart TD
+    PB[ [product_requirement_docs.md](mdc:docs/product_requirement_docs.md) ] --> PC[ [technical.md](mdc:docs/technical.md) ]
+    PB --> SP[ [architecture.md](mdc:docs/architecture.md) ]
+
+    SP --> TC[ [tasks_plan.md](mdc:tasks/tasks_plan.md) ]
+    PC --> TC
+    PB --> TC
+    
+    TC --> AC[ [active_context.md](mdc:tasks/active_context.md) ]
+
+    AC --> ER[ [error-documentation.mdc](mdc:.cursor/rules/error-documentation.mdc)]
+    AC --> LL[ [lessons-learned.mdc](mdc:.cursor/rules/lessons-learned.mdc) ]
+    
+    subgraph LIT[ @docs/literature ]
+        L1[...]
+        L2[...]
+    end
+    
+    subgraph RFC[ @tasks/rfc/ ]
+        R1[...]
+        R2[...]
+    end
+    
+    PC --o LIT
+    TC --o RFC
+
+```
+## 核心文件 (必需)
+  7 个文件:
+  1. [product_requirement_docs.md](mdc:docs/product_requirement_docs.md) (docs/product_requirement_docs.md): 产品需求文档 (PRD) 或 SOP。
+  - 项目存在的原因
+  - 解决的问题
+  - 定义核心需求与目标
+  - 塑造所有其他文件的基础文档
+  - 项目范围的单一事实来源 (Source of Truth)
+  - 若不存在, 在项目启动时创建
+
+  2. [architecture.md](mdc:docs/architecture.md) (docs/architecture.md): 系统架构
+  - 系统应如何工作
+  - 组件关系
+  - 依赖关系
+  - 解决方案工作流
+  - 解决方案概览的 Mermaid 图: 各组件与代码流
+
+  3. [technical.md](mdc:docs/technical.md) (docs/technical.md): 开发环境与技术栈
+  - 使用的技术
+  - 开发环境配置
+  - 关键技术决策
+  - 使用的设计模式
+  - 技术约束
+
+  4. [tasks_plan.md](mdc:tasks/tasks_plan.md) (tasks/tasks_plan.md): 详细任务 backlog
+  - 深度任务列表与项目进度
+  - 已完成部分
+  - 待构建部分
+  - 当前状态
+  - 已知问题
+  
+  5. [active_context.md](mdc:tasks/active_context.md) (tasks/active_context.md): 开发当前状态
+  - 当前工作焦点
+  - 活跃决策与考量
+  - 近期变更
+  - 下一步
+
+  6. [error-documentation.mdc](mdc:.cursor/rules/error-documentation.mdc) (.cursor/rules/error-documentation.mdc): 
+  - 交互过程中若发现本项目中的错误修复或可复用的纠正, 应记录于 @error-documentation.mdc, 避免重复犯错。
+  - 已知问题: 状态、上下文与解决方案
+
+  7. [lessons-learned.mdc](mdc:.cursor/rules/lessons-learned.mdc) (.cursor/rules/lessons-learned.mdc): 各项目的学习日志
+  - 记录重要模式、偏好与项目情报
+  - 详见 @lessons-learned.mdc
+
+## 上下文文件 (可选)
+详细文档。需要上下文时可按需检索。
+
+1. docs/literature/ :
+  - 文献调研与研究存放于此目录
+  - 每个文献主题为一份 latex 文件 (docs/literature/*.tex)
+
+2. tasks/rfc/ :
+  - 包含 @tasks_plan.md 中各独立任务的 RFC
+  - RFC 为 latex 文件格式 (tasks/*.tex)
+
+## 附加上下文
+当有助于组织信息时, 可在 docs/ 或 tasks/ 中创建额外的 Memory 文件或文件夹:
+- 集成规范
+- 测试策略
+- 基准测试配置
+- 可能的扩展
+- 部署流程
+
+# 核心工作流
+
+下文定义读写这些 Memory 文件的流程。
+系统在 distinct MODES 下运行: (PLAN/ACT) 或对应 (Architect/Code), 完全由用户输入或当前请求中的任务决定。当前输入决定 MODE, 并据此选择工作流。用户也可显式指定 MODE, 如 "MODE = PLAN MODE"/"Architect MODE" 或 "MODE = ACT MODE"/"Code MODE"; 若有显式 MODE 则遵从, 否则从请求推断。若不能百分之百确定 MODE, MUST 主动询问; 有任何疑问 MUST 明确追问。
+
+## PLAN 或 Architect MODE
+```mermaid
+flowchart TD
+    Start[开始] --> ReadFiles[读取 Memory 文件 ("docs/": (a)"docs/architecture.md" (b)"docs/product_requirement_docs.md" (c)"docs/technical.md". "tasks/" : (a)"tasks/active_context.md" (b)"tasks/tasks_plan.md". 若需要: "docs/literature" 与 "tasks/rfc") ]
+    ReadFiles --> CheckFiles{文件完整?}
+    
+    CheckFiles -->|否| Plan[制定计划]
+    Plan --> DocumentChat[在对话中记录]
+    
+    CheckFiles -->|是| VerifyContext[验证上下文]
+    VerifyContext --> Strategy[制定策略]
+    Strategy --> Present[呈现方案]
+    
+    Present --> Verification{方案已确认?}
+
+    Verification -->|否| Clarify[寻求澄清]
+    Clarify --> Strategy[制定策略]
+
+    Verification -->|是| DocumentMemory[写入 Memory 文件 ("docs/": (a)"docs/architecture.md" (b)"docs/product_requirement_docs.md" (c)"docs/technical.md". "tasks/" : (a)"tasks/active_context.md" (b)"tasks/tasks_plan.md" 若需要: "docs/literature" 与 "tasks/rfc")]
+```
+
+## ACT 或 Code MODE
+```mermaid
+flowchart TD
+    Start[开始] --> Context[检查 Memory 文件 (核心文件始终读取 ("docs/": (a)"docs/architecture.md" (b)"docs/product_requirement_docs.md" (c)"docs/technical.md". "tasks/" : (a)"tasks/active_context.md" (b)"tasks/tasks_plan.md"), 其余按上下文 (若需要: "docs/literature" 与 "tasks/rfc")) ]
+    Context --> Update[更新文档]
+    Update --> Rules[按需更新 [lessons-learned.mdc](mdc:.cursor/rules/lessons-learned.mdc), [error-documentation.mdc](mdc:.cursor/rules/error-documentation.mdc)]
+    Rules --> Execute[执行任务]
+    Execute --> Document[将变更写入 Memory 文件 ("docs/": (a)"docs/architecture.md" (b)"docs/product_requirement_docs.md" (c)"docs/technical.md". "tasks/" : (a)"tasks/active_context.md" (b)"tasks/tasks_plan.md" 若需要: "docs/literature" 与 "tasks/rfc") ]
+```
+
+# 文档更新
+
+在以下情况更新 Memory 文件:
+1. 发现新的项目模式
+2. 实现重大变更之后
+3. 用户要求 **update memory files** 时 (MUST 审阅全部核心文件)
+4. 需要澄清上下文时
+5. Plan 的重要部分经确认之后
+
+```mermaid
+flowchart TD
+    Start[更新流程]
+    
+    subgraph Process
+        P1[审阅核心文件]
+        P2[在 [active_context.md](mdc:tasks/active_context.md) 与 [tasks_plan.md](mdc:tasks/tasks_plan.md) 中记录当前状态]
+        P3[澄清下一步并写入 [tasks_plan.md](mdc:tasks/tasks_plan.md)]
+        P4[更新 [lessons-learned.mdc](mdc:.cursor/rules/lessons-learned.mdc), [error-documentation.mdc](mdc:.cursor/rules/error-documentation.mdc)]
+        P5 Update [ [architecture.md](mdc:docs/architecture.md) ]
+        
+        P1 --> P2 --> P3 --> P4
+    end
+    
+    Start --> Process
+```
+
+注意: 当由 **update memory files** 触发时, MUST 审阅每一个核心 Memory 文件, 即使部分无需更新。重点关注 [active_context.md](mdc:tasks/active_context.md) 与 [tasks_plan.md](mdc:tasks/tasks_plan.md), 因其跟踪当前状态。[architecture.md](mdc:docs/architecture.md) 中有当前工作流章节, 任何代码更新也会同步更新该部分。
+
+# 项目情报 ( [lessons-learned.mdc](mdc:.cursor/rules/lessons-learned.mdc) [.cursor/rules/lessons-learned.mdc] )
+
+[lessons-learned.mdc](mdc:.cursor/rules/lessons-learned.mdc) 是各项目的学习日志, 记录重要模式、偏好与项目情报, 帮助更高效协作。随着与你和项目的协作深入, 我会发现并记录代码本身无法体现的要点。
+
+```mermaid
+flowchart TD
+    Start{发现新模式}
+    
+    subgraph Learn [学习流程]
+        D1[识别模式]
+        D2[与用户确认]
+        D3[记录于 [lessons-learned.mdc](mdc:.cursor/rules/lessons-learned.mdc)]
+    end
+    
+    subgraph Apply [应用]
+        A1[阅读 [lessons-learned.mdc](mdc:.cursor/rules/lessons-learned.mdc)]
+        A2[应用已学模式]
+        A3[改进后续工作]
+    end
+    
+    Start --> Learn
+    Learn --> Apply
+```
+
+## 应记录的内容
+- 关键实现路径
+- 用户偏好与工作流
+- 项目特定模式
+- 已知挑战
+- 项目决策的演进
+- 工具使用模式
+
+格式可灵活调整 — 重点是记录有助于更高效协作的洞察。可将 [lessons-learned.mdc](mdc:.cursor/rules/lessons-learned.mdc) 视为随协作不断丰富的活文档。

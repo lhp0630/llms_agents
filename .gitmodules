@@ -1,0 +1,3 @@
+[submodule "ai-chat-ui"]
+	path = ai-chat-ui
+	url = https://github.com/pydantic/ai-chat-ui.git

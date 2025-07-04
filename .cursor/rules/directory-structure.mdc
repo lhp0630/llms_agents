@@ -1,0 +1,17 @@
+---
+description: 需遵循的目录结构
+globs: 
+alwaysApply: false
+---
+# 目录结构
+```mermaid
+flowchart TD
+    Root[项目根目录]
+    Root --> Docs[docs/]
+    Root --> Tasks[tasks/]
+    Root --> Cursor[.cursor/rules/]
+    Root --> CLINE[.clinerules]
+    Root --> SourceCode[src/]
+    Root --> Test[tests/]
+    Root --> Other[其他目录]
+```

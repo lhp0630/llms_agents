@@ -1,0 +1,122 @@
+---
+description: 实现代码时始终附加 (Act/Code MODE)
+globs: 
+alwaysApply: false
+---
+每次代码实现/变更开始前, MUST 完成以下 2 项:
+a. 阅读并理解 `docs/` 与 `tasks/` 中的文档
+b. 从 `src` 及项目中其他代码文件获取所需代码上下文
+---
+# 实现 (ACT MODE/Code MODE):
+<PROGRAMMING PRINCIPLES>
+- algorithm_efficiency: 使用最高效的算法与数据结构
+- modularity: 编写模块化代码, 将复杂逻辑拆分为更小的原子部分; 尽可能拆分为 class、文件、目录、模块、函数等
+- file_management: 将过长文件拆分为更小、更易管理的文件, 函数亦宜短小
+- import_statements: 优先从其他文件 import 函数, 而非直接修改那些文件
+- file_organization: 将文件组织到目录与文件夹中
+- reuse: 优先复用现有代码, 而非从零编写
+- code_preservation: 保留可用部分。无必要不修改已正常工作的组件
+- systematic_sequence: 一步完整完成后再开始下一步, 保持功能实现的系统顺序
+- design_patterns: 应用合适的设计模式以提升可维护性; 规划未来变更, 代码应可扩展、灵活、可伸缩、可维护
+- proactive_testing: 任何功能代码应配合适当测试, 见 <TESTING>
+</PROGRAMMING PRINCIPLES>
+
+<SYSTEMATIC CODE PROTOCOL>
+[Step: 1]
+<ANALYZE CODE>
+<DEPENDENCY ANALYSIS>
+- 哪些组件会受影响?
+- 存在哪些依赖?
+- 这是局部变更还是影响核心逻辑?
+- 哪些功能会受影响、如何受影响?
+- 此变更会产生哪些级联效应?
+</DEPENDENCY ANALYSIS>
+<FLOW ANALYSIS>
+- 在提出任何变更前, 对相关用例做完整的端到端流分析, 从入口 (如函数调用、变量初始化) 到所有受影响代码的执行
+- 追踪流经各相关组件的数据与逻辑, 以理解完整影响范围
+</FLOW ANALYSIS>
+- 详尽记录这些依赖, 包括 @memory.mdc 指定文件中函数或逻辑的具体用法
+</ANALYZE CODE>
+
+[Step: 2]
+<PLAN CODE>
+- 必要时启动 <CLARIFICATION> 流程
+- 使用 <STEP BY STEP REASONING> 在编码前列出详细计划, 含组件依赖与架构考量; 使用 <REASONING PRESENTATION> 说明所有代码变更、各部分作用及对其它区域的影响
+<STRUCTURED PROPOSALS>
+- 提供结构化提案, 明确: 1) 变更的文件、函数或代码行; 2) 变更原因 (bug 修复、改进或新功能); 3) 所有直接受影响的模块或文件; 4) 潜在副作用; 5) 权衡的详细说明
+</STRUCTURED PROPOSALS> 
+</PLAN CODE>
+
+[Step: 3]
+<MAKE CHANGES>
+
+1. 在 @memory.mdc 指定文件中记录当前状态
+- 当前什么正常工作?
+- 当前错误/问题是什么?
+- 哪些文件会受影响?
+
+2. 每次只做单一逻辑变更
+<INCREMENTAL ROLLOUTS>
+- 一次一个逻辑功能
+- 但须在本变更内完全解决, 并在代码其它部分做相应调整
+- 调整本变更带来的所有现有依赖与问题
+- architecture_preservation: 提交前确保新代码与现有项目结构与架构无缝集成; 不做破坏现有代码组织或文件的变更
+</INCREMENTAL ROLLOUTS>
+
+3. 模拟测试
+<SIMULATION ANALYSIS>
+- 通过 dry run、trace 调用或其他合适方法模拟用户交互与行为, 严格分析拟议变更在预期与边界场景下的影响
+- 生成所有潜在副作用的反馈
+</SIMULATION ANALYSIS>
+<SIMULATION VALIDATION>
+- 模拟未通过且未验证现有功能均保留时, 不得提出变更; 若模拟失败, 须先给出修复再继续
+</SIMULATION VALIDATION>
+- 模拟测试通过后, 再进行实际实现
+</MAKE CHANGES>
+
+[Step: 4] 执行 <TESTING>
+
+[Step: 5] 循环 1–4 并实现全部变更
+- 系统性地逐项纳入所有变更
+- 逐项验证与测试
+
+[Step: 6] 优化已实现代码
+- 在所有变更测试验证通过后, 再优化实现代码
+
+</SYSTEMATIC CODE PROTOCOL>
+
+<REFERENCE>
+- 参考相关文档与最佳实践
+- 必要时使用 <WEB USE> 查阅文档或最佳实践
+</REFERENCE>
+
+# 测试 (实现后 MUST 编写 TEST) [ACT/Code MODE]
+<TESTING>
+
+<DEPENDENCY BASED TESTING>
+为任何新功能编写单元测试。运行 <ANALYZE CODE> 中的全部测试, 确认现有行为仍符合预期
+</DEPENDENCY BASED TESTING>
+<NO BREAKAGE ASSERTION>
+提出变更后须自行运行测试并确认通过; 不要依赖用户代测, 须确保代码不会被破坏
+</NO BREAKAGE ASSERTION>
+
+1. 测试逻辑写在独立文件中, 与功能实现分离, 保持代码整洁可维护
+
+<TEST PLAN>
+- 针对新增/更新的功能, 结合需求与期望结果, 构思足够充分的测试计划
+- 定义覆盖边界情况的全面测试场景
+- 为项目技术栈指定合适的验证方法
+- 建议监控方式以验证方案有效性
+- 考虑潜在回归及预防手段
+</TEST PLAN>
+
+2. 对任何新增的关键功能 MUST 编写测试代码。初始测试生成使用 <DEPENDENCY BASED TESTING> 与 <NO BREAKAGE ASSERTION>, 再按 <TEST PLAN> 编写更全面的测试
+3. 按 @memory.mdc 要求记录测试
+</TESTING>
+
+- 实现新功能时须彻底完成直至测试通过, 不要提前停止
+
+---
+每次代码实现/变更结束后, MUST 完成以下 2 项:
+a. 更新 `src` 及项目中其他可能受影响的代码
+b. 更新 `docs/` 与 `tasks/` 中的文档

@@ -1,24 +1,23 @@
 ---
 description: 调试时始终包含
-globs: 
 alwaysApply: false
 ---
-<DEBUGGING>
+
 以下调试流程适用于持续性错误或修复不完整的情况。仅在陷入僵局时使用本流程。
 
-<DIAGNOSE>
+## 诊断
+
 - 收集所有错误信息、日志及行为症状
 - 从相关文件中补充上下文
 - 按 @memory.mdc 要求检索相关项目架构、计划及当前工作任务
-</DIAGNOSE>
 
-- 每当测试失败时, 必须先通过 <DIAGNOSE> 补充更多上下文并有效调试, 待信息完整后再着手修复。
-- 先说明 OBSERVATIONS (观察) , 再给出 REASONINGS (推理) , 解释为何确定是此问题而非其他原因。
-- 若不确定, 先通过 <DIAGNOSE> 补充更多 OBSERVATIONS, 以精确、具体地定位问题; 必要时可寻求 <CLARIFICATION>。
-- 使用 <ANALYZE CODE> (定义见 [implement.mdc](mdc:.cursor/rules/implement.mdc) ) 理解与问题相关的架构。
-- 使用 <STEP BY STEP REASONING> 考虑所有可能原因, 如架构错位、设计缺陷而非单纯 bug 等。
-- 在 @error-documentation.mdc 及代码库中查找类似已解模式; 必要时使用 <WEB USE>。
-- 使用 <REASONING PRESENTATION> 呈现修复方案以供验证。
-- 按 <SYSTEMATIC CODE PROTOCOL> 与 <TESTING> (均定义于 [implement.mdc](mdc:.cursor/rules/implement.mdc) ) 开始修改代码并修复问题。
+## 调试流程
 
-</DEBUGGING>
+- 每当测试失败时, 必须先通过诊断补充更多上下文并有效调试, 待信息完整后再着手修复。
+- 先说明 OBSERVATIONS (观察), 再给出 REASONINGS (推理), 解释为何确定是此问题而非其他原因。
+- 若不确定, 先通过诊断补充更多 OBSERVATIONS, 以精确、具体地定位问题; 必要时可寻求澄清。
+- 使用分析代码理解与问题相关的架构。
+- 考虑所有可能原因, 如架构错位、设计缺陷而非单纯 bug 等。
+- 在 @error-documentation.mdc 及代码库中查找类似已解模式; 必要时查阅文档。
+- 呈现修复方案以供验证。
+- 按系统化代码协议与测试开始修改代码并修复问题。

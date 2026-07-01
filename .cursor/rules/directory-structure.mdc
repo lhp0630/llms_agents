@@ -1,17 +1,22 @@
 ---
 description: 需遵循的目录结构
-globs: 
 alwaysApply: false
 ---
+
 # 目录结构
-```mermaid
-flowchart TD
-    Root[项目根目录]
-    Root --> Docs[docs/]
-    Root --> Tasks[tasks/]
-    Root --> Cursor[.cursor/rules/]
-    Root --> CLINE[.clinerules]
-    Root --> SourceCode[src/]
-    Root --> Test[tests/]
-    Root --> Other[其他目录]
+
+```
+project/
+├── .claude/                    # Claude Code 配置
+├── .cursor/                    # Cursor AI 配置
+├── PRPs/                       # 产品需求提示 (Claude Code 工作流)
+├── docs/                       # 文档
+├── tasks/                      # 任务管理 (通用项目任务)
+├── examples/                   # 代码示例
+├── src/                        # 源代码
+├── tests/                      # 测试代码
+├── CLAUDE.md                   # Claude Code 全局规则
+├── AGENTS.md                   # MiMoCode 规则
+├── MEMORY.md                   # 记忆文档系统
+├── CONTRIBUTING.md             # Git 贡献规范
 ```

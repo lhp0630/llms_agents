@@ -1,7 +1,7 @@
 - 依赖管理工具使用 uv
 - 代码格式化工具使用 ruff
   ```sh
-  uv run ruff format .
+  uv run ruff format src
   ```
 - API 框架使用 socketify
   - 安装

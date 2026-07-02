@@ -4,6 +4,9 @@ target-version = "py313"
 line-length = 88
 indent-width = 4
 
+include = ["src/**/*.py", "src/**/*.pyi"]
+extend-exclude = ["ai-chat-ui", "tests"]
+force-exclude = true
 exclude = [".*", "scripts"]
 
 
